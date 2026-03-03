@@ -51,6 +51,12 @@ export default function RootLayout({
                 >
                   Quotes
                 </Link>
+                <Link
+                  href="/automation-jobs"
+                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-foreground transition-colors"
+                >
+                  Automation Jobs
+                </Link>
               </Show>
             </nav>
             <div className="flex items-center gap-4">

@@ -136,3 +136,38 @@ export async function createSampleQuote(): Promise<Quote> {
 
   return quote;
 }
+
+// Get a single quote with its line items
+export async function getQuoteWithLineItems(
+  quoteId: string
+): Promise<{ quote: Quote; lineItems: QuoteLineItem[] } | null> {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const supabase = createServerClient();
+
+  const { data: quote, error: quoteError } = await supabase
+    .from("quotes")
+    .select("*")
+    .eq("id", quoteId)
+    .single();
+
+  if (quoteError || !quote) {
+    return null;
+  }
+
+  const { data: lineItems, error: lineItemsError } = await supabase
+    .from("quote_line_items")
+    .select("*")
+    .eq("quote_id", quoteId)
+    .order("id", { ascending: true });
+
+  if (lineItemsError) {
+    console.error("Error fetching line items:", lineItemsError);
+    throw new Error("Failed to fetch line items");
+  }
+
+  return { quote, lineItems: lineItems ?? [] };
+}
